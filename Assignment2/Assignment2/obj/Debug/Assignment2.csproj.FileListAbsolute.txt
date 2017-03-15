@@ -1,0 +1,6 @@
+D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\Assignment2.exe.config
+D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\Assignment2.exe
+D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\Assignment2.pdb
+D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.csprojResolveAssemblyReference.cache
+D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.exe
+D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.pdb
