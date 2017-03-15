@@ -14,14 +14,11 @@ namespace Assignment2
         {
             graph = g;
         }
-
-        public int FitnessFunction(String input)
-        { }
-
+        /*
         public String VSN(String input)
         { }
 
         public String Recombination(String input)
-        { }
+        { }*/
     }
 }

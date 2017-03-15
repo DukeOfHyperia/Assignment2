@@ -9,7 +9,7 @@ namespace Assignment2
 {
     class Graph
     {
-        Dictionary<int, Vertex> graph;
+        public Dictionary<int, Vertex> graph;
 
         public Graph()
         {
@@ -31,6 +31,22 @@ namespace Assignment2
                     graph.Add(Convert.ToInt32(data[1]), new Vertex(data));
                 }
             }
+        }
+
+        public int calculateFitness(String input)
+        {
+            int connections = 0;
+
+            for(int i = 0; i < input.Length; i++)
+            {
+                Char partition = input[i];
+
+                foreach(int n in graph[i + 1].neighbours)
+                    if (input[n - 1] != partition)
+                        connections++;
+            }
+
+            return connections / 2;
         }
     }
 }
