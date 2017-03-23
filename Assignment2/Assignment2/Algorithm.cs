@@ -10,9 +10,9 @@ namespace Assignment2
     {
         Metaheuristic h;
 
-        public Algorithm(Graph graph)
+        public Algorithm(Graph graph, List<Individual> population)
         {
-            h = new Metaheuristic(graph);
+            h = new Metaheuristic();
         }
 
         // MLS - ILS - GLS

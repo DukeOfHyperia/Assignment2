@@ -11,18 +11,29 @@ namespace Assignment2
         static void Main()
         {
             Graph graph = new Graph();
+            Solution sol;
 
             // run 25 times
-            Execute(graph);
+            for (int c = 0; c < 2; c++)
+            {
+                for (int ls = 0; ls < 3; ls++)
+                {
+                    for (int i = 0; i < 25; i++)
+                    {
+                        Execute(graph, 20, c == 0);
+                    }
+                }
+            }
         }
 
-        static void Execute(Graph graph)
+        static Tuple<int, int, double> Execute(Graph graph, int populationSize, Boolean criteria)
         {
-            List<Individual> population = generateInitialPopulation(graph, 10);
-            // initial population
+                List<Individual> population = generateInitialPopulation(graph, populationSize);
+                // initial population
 
-            Algorithm alg = new Algorithm(graph);
+                Algorithm alg = new Algorithm(graph, population);
 
+            return new Tuple<int, int, double>(0, 0, 0.0);
         }
 
         static List<Individual> generateInitialPopulation(Graph g, int n)
