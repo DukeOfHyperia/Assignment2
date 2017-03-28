@@ -186,5 +186,85 @@ namespace Assignment2
             return swaps;
         }
 
+        public Individual FM(Individual solution)
+        {
+            Individual newsolution = solution;
+            int iter = 0;
+            while (newsolution.connections < solution.connections || iter == 0) //repeat until no improvement
+            {
+                solution = newsolution;
+                List<Vertex> A = new List<Vertex>();
+                List<Vertex> B = new List<Vertex>();
+                for (int i = 0; i < 500; i++)
+                {
+                    if (solution.solution[i] == '0')
+                        A.Add(new Vertex(i, VertexGain(solution.solution, i)));
+                    else
+                        B.Add(new Vertex(i, VertexGain(solution.solution, i)));
+                }
+
+                List<Individual> solutions = new List<Individual>();
+                String binary;
+                while (A.Count > 0)
+                {
+                    //get max gain from A
+                    Vertex maxA = A.OrderByDescending(x => x.gain).First();
+
+                    //move maxA to B
+                    A.Remove(maxA);
+                    char[] a = solution.solution.ToCharArray();
+                    a[maxA.id] = '1';
+                    binary = new String(a);
+
+                    //recompute gains B
+                    B = RecomputeGains(B, binary);
+
+                    //get max gain from B
+                    Vertex maxB = B.OrderByDescending(x => x.gain).First();
+
+                    //move maxB to A
+                    B.Remove(maxB);
+                    char[] b = binary.ToCharArray();
+                    b[maxB.id] = '0';
+                    binary = new String(b);
+
+                    //recompute gains A for next iteration
+                    if (A.Count > 0)
+                        A = RecomputeGains(A, binary);
+
+                    solution = new Individual(binary, graph.calculateFitness(binary));
+                    solutions.Add(solution);
+                }
+                newsolution = solutions.OrderBy(x => x.connections).First();
+                iter++;
+            }
+            return newsolution;
+        }
+
+        public int VertexGain(String input, int vertexid)
+        {
+            int E = 0; //external cost
+            int I = 0; //internal cost
+            Char subset = input[vertexid];
+            foreach (int n in graph.graph[vertexid + 1].neighbours)
+            {
+                if (input[n - 1] == subset)
+                    I++;
+                else
+                    E++;
+            }
+            return E - I;
+        }
+
+        private List<Vertex> RecomputeGains(List<Vertex> arrayGains, String input)
+        {
+            List<Vertex> newGains = new List<Vertex>();
+            foreach (Vertex v in arrayGains)
+            {
+                newGains.Add(new Vertex(v.id, VertexGain(input, v.id)));
+            }
+            return newGains;
+        }
+
     }
 }

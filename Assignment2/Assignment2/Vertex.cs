@@ -10,6 +10,7 @@ namespace Assignment2
     {
         public int id;
         public List<int> neighbours;
+        public int gain;
 
         public Vertex(String[] data)
         {
@@ -18,6 +19,12 @@ namespace Assignment2
             neighbours = new List<int>();
             for (int i = 4; data[3] != "0" && i < data.Length; i++)
                 neighbours.Add(Convert.ToInt32(data[i]) - 1);
+        }
+
+        public Vertex(int Id, int Gain)
+        {
+            id = Id;
+            gain = Gain;
         }
     }
 }

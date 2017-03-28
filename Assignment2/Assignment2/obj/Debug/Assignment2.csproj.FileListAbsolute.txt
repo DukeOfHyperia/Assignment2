@@ -17,3 +17,6 @@ D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignme
 D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\normnfkc.nlp
 D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\normnfkd.nlp
 D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.csprojResolveAssemblyReference.cache
+C:\Users\ratih\Source\Repos\Assignment22\Assignment2\Assignment2\bin\Debug\Assignment2.exe.config
+C:\Users\ratih\Source\Repos\Assignment22\Assignment2\Assignment2\obj\Debug\Assignment2.exe
+C:\Users\ratih\Source\Repos\Assignment22\Assignment2\Assignment2\obj\Debug\Assignment2.pdb
