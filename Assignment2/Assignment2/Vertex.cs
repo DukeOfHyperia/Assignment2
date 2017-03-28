@@ -13,11 +13,11 @@ namespace Assignment2
 
         public Vertex(String[] data)
         {
-            id = Convert.ToInt32(data[1]);
+            id = Convert.ToInt32(data[1]) - 1;
 
             neighbours = new List<int>();
             for (int i = 4; data[3] != "0" && i < data.Length; i++)
-                neighbours.Add(Convert.ToInt32(data[i]));
+                neighbours.Add(Convert.ToInt32(data[i]) - 1);
         }
     }
 }

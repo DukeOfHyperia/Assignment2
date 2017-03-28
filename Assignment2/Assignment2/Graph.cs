@@ -28,7 +28,7 @@ namespace Assignment2
                     }
 
                     String[] data = line.Split(' ');
-                    graph.Add(Convert.ToInt32(data[1]), new Vertex(data));
+                    graph.Add(Convert.ToInt32(data[1]) - 1, new Vertex(data));
                 }
             }
         }
@@ -41,12 +41,32 @@ namespace Assignment2
             {
                 Char partition = input[i];
 
-                foreach(int n in graph[i + 1].neighbours)
-                    if (input[n - 1] != partition)
+                foreach(int n in graph[i].neighbours)
+                    if (input[n] != partition)
                         connections++;
             }
-
             return connections / 2;
+        }
+
+        public int calculateFitness(String input, int baseConnections, int first, int second)
+        {
+            List<int> changes = new List<int>() { first, second };
+
+            foreach (int i in changes)
+            {
+                int connections = 0;
+                Char partition = input[i];
+
+                foreach (int n in graph[i].neighbours)
+                    if (input[n] != partition)
+                        connections++;
+
+                baseConnections +=  - (graph[i].neighbours.Count - connections) + connections;
+            }
+            if (graph[first].neighbours.Contains(second))
+                baseConnections--;
+
+            return baseConnections;
         }
     }
 }

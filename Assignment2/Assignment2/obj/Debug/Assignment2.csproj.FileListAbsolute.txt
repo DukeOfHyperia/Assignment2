@@ -4,3 +4,16 @@ D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2
 D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.csprojResolveAssemblyReference.cache
 D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.exe
 D:\Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.pdb
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\Assignment2.exe.config
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.exe
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.pdb
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\Assignment2.exe
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\Assignment2.pdb
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\mscorlib.dll
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\nl\mscorlib.resources.dll
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\normidna.nlp
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\normnfc.nlp
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\normnfd.nlp
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\normnfkc.nlp
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\bin\Debug\normnfkd.nlp
+D:\UU Informatica\4e Jaar (Master)\3 Evolutionary Computing\Assignment2\Assignment2\Assignment2\obj\Debug\Assignment2.csprojResolveAssemblyReference.cache
