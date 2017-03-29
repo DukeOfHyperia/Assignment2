@@ -188,9 +188,8 @@ namespace Assignment2
 
         public Individual FM(Individual solution)
         {
-            Individual newsolution = solution;
-            int iter = 0;
-            while (newsolution.connections < solution.connections || iter == 0) //repeat until no improvement
+            Individual newsolution = new Individual("", 0);
+            while (newsolution.connections < solution.connections) //repeat until no improvement
             {
                 solution = newsolution;
                 List<Vertex> A = new List<Vertex>();
@@ -236,7 +235,6 @@ namespace Assignment2
                     solutions.Add(solution);
                 }
                 newsolution = solutions.OrderBy(x => x.connections).First();
-                iter++;
             }
             return newsolution;
         }
@@ -246,9 +244,9 @@ namespace Assignment2
             int E = 0; //external cost
             int I = 0; //internal cost
             Char subset = input[vertexid];
-            foreach (int n in graph.graph[vertexid + 1].neighbours)
+            foreach (int n in graph.graph[vertexid].neighbours)
             {
-                if (input[n - 1] == subset)
+                if (input[n] == subset)
                     I++;
                 else
                     E++;
