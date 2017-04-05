@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,34 +9,27 @@ namespace Assignment2
 {
     class Solution
     {
-        List<int> solutions, lclOptima;
-        List<double> time;
         int popSize;
         String lsType; // 0: ILS, 1: MLS, 2: GLS
+        String neighbourSearch; // true: VSN, false: FM
+        List<Tuple<int, int, long>> timeOptima;
 
-        public Solution(int Type, int PopSize)
+        public Solution(String Type, String Search, int PopSize = 0)
         {
-            if (Type == 0)
-                lsType = "ILS";
-            else if (Type == 1)
-                lsType = "MLS";
-            else
-                lsType = "GLS";
+            lsType = Type;
             popSize = PopSize;
 
-            solutions = new List<int>();
-            lclOptima = new List<int>();
-            time = new List<double>();
+            neighbourSearch = Search;
+
+            timeOptima = new List<Tuple<int, int, long>>();
         }
 
-        public void addRun(Tuple<int, int, double> data)
+        public void addRun(List<Tuple<int, int, long>> sol)
         {
-            solutions.Add(data.Item1);
-            lclOptima.Add(data.Item2);
-            time.Add(data.Item3);
+            timeOptima.AddRange(sol);
         }
 
-        private String calculateStatistics(List<double> data)
+        private String calculateStatistics(List<int> data)
         {
             if (data.Count != 0)
             {
@@ -49,32 +43,62 @@ namespace Assignment2
             }
             return "NA (NA)";
         }
-        private String calculateStatistics(List<int> data)
+
+        public void outputResults()
         {
-            List<double> newData = new List<double>();
-            foreach (int i in data)
-                newData.Add(Convert.ToDouble(i));
-            return calculateStatistics(newData);
+            StreamWriter sw = new StreamWriter(lsType + "[" + neighbourSearch + "](" + popSize + ").txt");
+
+            List<int> data = new List<int>() { 1500, 1200 };
+            for (int i = 0; i < data.Count; i++)
+            {
+                List<int> results = new List<int>();
+                List<int> times = selectResultsOnOptima(data[i], i == 0, out results);
+
+                int min = results.Min();
+                int max = results.Max();
+                double avg = results.Average();
+
+                Console.WriteLine(lsType + " (" + neighbourSearch + ") : " + popSize + "               (" + (i+1) + "/2)");
+                Console.WriteLine("*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*");
+                String line = "& " + String.Join(" & ", min, calculateStatistics(results), max, calculateStatistics(times)) + " \\\\";
+                Console.WriteLine(line);
+                sw.WriteLine(line);
+                Console.WriteLine("");
+                sw.WriteLine("");
+            }
+            Console.WriteLine("");
+            sw.Close();
+
+        }
+
+        private List<int> selectResultsOnOptima(int bound, Boolean equal, out List<int> best)
+        {
+            List<int> times = new List<int>();
+            best = new List<int>();
+
+            if (equal)
+            {
+                foreach (Tuple<int, int, long> tup in timeOptima)
+                {
+                    if (tup.Item1 == bound)
+                    {
+                        times.Add(Convert.ToInt32(tup.Item3));
+                        best.Add(tup.Item2);
+                    }
+                }
+            }
+            else
+            {
+                foreach (Tuple<int, int, long> tup in timeOptima)
+                {
+                    if (tup.Item3 >= bound)
+                    {
+                        times.Add(tup.Item1);
+                        best.Add(tup.Item2);
+                    }
+                }
+            }
+            return times;
         }
     }
-
-    /*public void outputResults()
-    {
-        Console.WriteLine(crossovertype + ": " + fitnessFunction);
-        Console.WriteLine("Population size: " + populationSize);
-        Console.WriteLine("Succes   : " + succes + "/25");
-        Console.WriteLine("First hit: " + calculateStatistics(firstHit));
-        Console.WriteLine("Converge : " + calculateStatistics(converge));
-        Console.WriteLine("Fct Evals: " + calculateStatistics(fctEvals));
-        Console.WriteLine("CPU time : " + calculateStatistics(cpuTime) + "ms");
-        Console.WriteLine("");
-
-        // Output LaTeX-code for tables
-        /*Console.WriteLine(" & " + String.Join(" & ", populationSize,
-                                                        succes + "/25",
-                                                        calculateStatistics(firstHit),
-                                                        calculateStatistics(converge),
-                                                        calculateStatistics(fctEvals),
-                                                        calculateStatistics(cpuTime)) + " \\\\");
-        Console.WriteLine("");*/
 }

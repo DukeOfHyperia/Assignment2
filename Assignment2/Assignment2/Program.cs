@@ -12,45 +12,122 @@ namespace Assignment2
         static void Main()
         {
             Graph graph = new Graph();
-            
-            //for(int i = 5; i < 21; i += 5)
-                Execute(graph, 1, true);
-
-            Console.Write("Done!");
-            Console.ReadLine();
-            /*Solution sol;
-
-            // run 25 times
-            for (int c = 0; c < 2; c++)
-            {
-                for (int ls = 0; ls < 3; ls++)
-                {
-                    for (int i = 0; i < 25; i++)
-                    {
-                        Execute(graph, 20, c == 0);
-                    }
-                }
-            }*/
-        }
-
-        static Tuple<int, int, double> Execute(Graph graph, int populationSize, Boolean criteria)
-        {
             Algorithm alg = new Algorithm(graph);
 
-            /*for (int t = 0; t < 10; t++)
+            for (int type = 0; type < 3; type++)
             {
-                Thread thread = new Thread(() => alg.GLS(t, populationSize));
-                thread.Start();
+                if (type == 0) // MLS
+                {
+                    Thread tMLS = new Thread(() => MLS(alg));
+                    tMLS.Name = "MLS ";
+                    tMLS.Start();
+                }
+                else if (type == 1) // ILS
+                {
+                    Thread tILS = new Thread(() => ILS(alg));
+                    tILS.Name = "ILS";
+                    tILS.Start(); 
+                }
+                else if (type == 2) // GLS
+                {
+                    Thread tGLS = new Thread(() => GLS(alg));
+                    tGLS.Name = "GLS";
+                    tGLS.Start(); 
+                }
 
-                Thread.Sleep(100);
-            }*/
-            //alg.MLS(0);
-            alg.GLS(0, 10);
-
-            //Console.ReadLine();
-            return new Tuple<int, int, double>(0, 0, 0.0);
+                Thread.Sleep(1000);
+            }
+            Console.ReadLine();
         }
 
-        
+        static void MLS(Algorithm alg)
+        {
+            Console.WriteLine("Start: MLS [VSN] : " + DateTime.Now.ToShortTimeString());
+            Individual best;
+            List<Tuple<int, int, long>> data;
+            Solution solMLS = new Solution("MLS", "VSN");
+            for (int i = 0; i < 10; i++)
+            {
+                data = alg.MLS(0, true, out best);
+                solMLS.addRun(data);
+                Console.WriteLine("MLS [VSN](" + i + "/10) : " + DateTime.Now.ToShortTimeString());
+            }
+
+            solMLS.outputResults();
+
+            Console.WriteLine("Start: MLS [FM] : " + DateTime.Now.ToShortTimeString());
+            solMLS = new Solution("MLS", "FM");
+            for (int i = 0; i < 10; i++)
+            {
+                data = alg.MLS(0, false, out best);
+                solMLS.addRun(data);
+                Console.WriteLine("MLS [FM](" + i + "/10) : " + DateTime.Now.ToShortTimeString());
+            }
+
+            solMLS.outputResults();
+        }
+        static void ILS(Algorithm alg)
+        {
+            Individual best;
+            List<Tuple<int, int, long>> data;
+            Solution solILS;
+            List<int> pertSizes = new List<int>() { 5 };
+            foreach (int size in pertSizes)
+            {
+                Console.WriteLine("Start: ILS<" + size + "> : " + DateTime.Now.ToShortTimeString());
+                solILS = new Solution("ILS", "VSN", size);
+                for (int i = 0; i < 10; i++)
+                {
+                    data = alg.ILS(i, size, true, out best);
+                    solILS.addRun(data);
+                    Console.WriteLine("ILS<" + size + "> (" + i + "/10) : " + DateTime.Now.ToShortTimeString());
+                }
+
+                solILS.outputResults();
+            }
+
+            Console.WriteLine("Start: ILS<5> : " + DateTime.Now.ToShortTimeString());
+            solILS = new Solution("ILS", "FM", 5);
+            for (int i = 0; i < 10; i++)
+            {
+                data = alg.ILS(i, 5, false, out best);
+                solILS.addRun(data);
+                Console.WriteLine("ILS<5> [FM](" + i + "/10) : " + DateTime.Now.ToShortTimeString());
+            }
+
+            solILS.outputResults();
+        }
+        static void GLS(Algorithm alg)
+        {
+            Individual best;
+            List<Tuple<int, int, long>> data;
+            Solution solGLS;
+            List<int> popSizes = new List<int>() { 25 };
+            foreach (int size in popSizes)
+            {
+                Console.WriteLine("Start: GLS<" + size + "> : " + DateTime.Now.ToShortTimeString());
+                solGLS = new Solution("GLS", "VSN", size);
+                for (int i = 0; i < 10; i++)
+                {
+                    data = alg.GLS(i, size, true, out best);
+                    solGLS.addRun(data);
+                    Console.WriteLine("GLS<" + size + "> (" + i + "/10) : " + DateTime.Now.ToShortTimeString());
+                }
+
+                solGLS.outputResults();
+            }
+
+            Console.WriteLine("Start: GLS<25> : " + DateTime.Now.ToShortTimeString());
+            solGLS = new Solution("GLS", "FM", 25);
+            for (int i = 0; i < 10; i++)
+            {
+                data = alg.GLS(i, 25, false, out best);
+                solGLS.addRun(data);
+                Console.WriteLine("GLS<25> [FM](" + i + "/10) : " + DateTime.Now.ToShortTimeString());
+            }
+
+            solGLS.outputResults();
+        }
+
     }
 }

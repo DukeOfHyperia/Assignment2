@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,121 +10,171 @@ namespace Assignment2
     class Algorithm
     {
         Metaheuristic h;
+        Graph g;
 
         public Algorithm(Graph graph, List<Individual> population = null)
         {
             h = new Metaheuristic(graph);
+            g = graph;
         }
 
         // MLS - ILS - GLS
-        public void MLS(int id)
+        public List<Tuple<int, int, long>> MLS(int id, Boolean searchType, out Individual best)
         {
-            Queue<Individual> localOptima = h.generateInitialPopulation(1);
-            int best = int.MaxValue;
+            List<Tuple<int, int, long>> sol = new List<Tuple<int, int, long>>();
+            int checks = 0;
+            Stopwatch clock = new Stopwatch();
+            clock.Start();
 
-            for (int lclO = 0; lclO < 2000; lclO++)
-            {
-                Individual solution = localOptima.Dequeue();
-                Individual newSolution = solution;
-
-                while (newSolution != null && newSolution.connections >= solution.connections)
-                    newSolution = h.VSN_search(solution);
-
-                if (newSolution == null)
-                {
-                    newSolution = h.generateInitialPopulation(1).Dequeue();
-                    Console.WriteLine("Old best: " + best);
-                    Console.WriteLine("New startpoint");
-                }
-                
-                localOptima.Enqueue(newSolution);
-
-                if (newSolution.connections < best)
-                    best = newSolution.connections;
-
-                if(lclO % 10 == 0)
-                    Console.WriteLine("<" + id + "> [" + lclO + "]" + newSolution.connections);
-            }
-
-            Console.WriteLine("<" + id + ">              Final:" + best);
-        }
-        
-        public void ILS(int id, int perturbationSize, int timeLimit = 0)
-        {
             Individual startSolution = h.generateInitialPopulation(1).Dequeue();
-            Individual newSolution = startSolution;
-            Individual best = new Individual("", int.MaxValue);
-            int nrOfReturns = 0;
+            best = new Individual("", int.MaxValue);
 
-            for(int lclO = 0; lclO < 2000; lclO++)
+            int lclO = 0;
+            while (lclO <= 2000 || checks <= 10) // 1200 seconds
             {
-                while (newSolution.connections >= startSolution.connections)
-                {
-                    newSolution = h.VSN_search(startSolution);
-
-                    if (newSolution == null)
-                    {
-                        newSolution = h.pertubation(startSolution, perturbationSize);
-                        Console.WriteLine("Jumped to " + newSolution.connections);
-                        break;
-                    }
-                }
+                Individual newSolution;
+                if (searchType)
+                    newSolution = h.VSN(startSolution);
+                else
+                    newSolution = h.FM(startSolution);
 
                 if (newSolution.connections < best.connections)
                     best = newSolution;
-                else if (newSolution.connections == best.connections && newSolution.solution == best.solution)
-                    nrOfReturns++;
 
-                Console.WriteLine("<" + id + " : " + perturbationSize + "> [" + lclO + "] " + best.connections + " !" + nrOfReturns + "! " + newSolution.connections);
+                startSolution = h.generateInitialPopulation(1).Dequeue();
 
-                startSolution = newSolution;
+                // OUTPUT
+                if (lclO % 500 == 0 && lclO <= 2000)
+                    sol.Add(new Tuple<int, int, long>(lclO, best.connections, clock.ElapsedMilliseconds / 1000));
+
+                if (clock.ElapsedMilliseconds > 120000 * checks && checks <= 10)
+                {
+                    sol.Add(new Tuple<int, int, long>(lclO, best.connections, clock.ElapsedMilliseconds / 1000));
+                    checks++;
+                }
+                lclO++;
             }
+            clock.Stop();
 
-            Console.WriteLine("<" + id + ">              Final:" + best.connections);
+            return sol;
         }
         
-        
-        public void GLS(int id, int popSize, int timeLimit = 0)
+        public List<Tuple<int, int, long>> ILS(int id, int perturbationSize, Boolean searchType, out Individual best)
         {
+            List<Tuple<int, int, long>> sol = new List<Tuple<int, int, long>>();
+            int checks = 1;
+            Stopwatch clock = new Stopwatch();
+            clock.Start();
+
+            Individual startSolution = h.generateInitialPopulation(1).Dequeue();
+            best = new Individual("", int.MaxValue);
+
+            Individual newSolution;
+
+            int lclO = 0;
+            while (lclO <= 2000 || checks <= 10) // 1200 seconds
+            {
+                
+                if (searchType)
+                    newSolution = h.VSN(startSolution);
+                else
+                    newSolution = h.FM(startSolution);
+
+                if (newSolution.connections < best.connections)
+                    best = newSolution;
+
+                startSolution = h.pertubation(newSolution, perturbationSize);
+
+                // OUTPUT
+                if (lclO % 500 == 0 && lclO <= 2000)
+                    sol.Add(new Tuple<int, int, long>(lclO, best.connections, clock.ElapsedMilliseconds / 1000));
+
+                if (clock.ElapsedMilliseconds > 120000 * checks && checks <= 10)
+                {
+                    sol.Add(new Tuple<int, int, long>(lclO, best.connections, clock.ElapsedMilliseconds / 1000));
+                    checks++;
+                }
+                lclO++;
+            }
+            clock.Stop();
+
+            return sol;
+        }
+        
+        public List<Tuple<int, int, long>> GLS(int id, int popSize, Boolean searchType, out Individual best)
+        {
+            List<Tuple<int, int, long>> sol = new List<Tuple<int, int, long>>();
+            int checks = 1;
+            Stopwatch clock = new Stopwatch();
+            clock.Start();
+
+            int max = Int32.MaxValue;
+            best = new Individual("", max);
+            
+
             List<Individual> initialpopulation = h.generateInitialPopulation(popSize).ToList();
             //incremental: only one population, everytime an offspring created, it competes with worst solution in population
             //generational: new population (of offspring) replaces the old population
 
             //keep local optima found = local search
             List<Individual> newPopulation = new List<Individual>();
+            Individual localOptima;
             for(int i = 0; i < popSize; i++)
             {
-                Console.WriteLine("LS on:       " + initialpopulation[i].connections);
-                Individual localoptima = h.VSN(initialpopulation[i], 1500);
-                Console.WriteLine("Results in:  " + localoptima.connections);
-                newPopulation.Add(localoptima);
+                if (searchType)
+                    localOptima = h.VSN(initialpopulation[i]);
+                else
+                    localOptima = h.FM(initialpopulation[i]);
+
+                //Console.WriteLine("Start with:  " + localOptima.connections);
+                newPopulation.Add(localOptima);
             }
 
             //incremental
             Random rand = new Random();
-            for(int i = 0; i < 2000; i++)
+            int lclO = popSize;
+            while (lclO <= 2000 || checks <= 10) // 1200 seconds
             {
                 //parent pair selected at random
-                int random1 = rand.Next(0, popSize);
-                int random2 = random1;
-                while (random2 == random1)
-                    random2 = rand.Next(0, popSize);
+                int first = rand.Next(0, popSize);
+                int second = first;
+                while (second == first)
+                    second = rand.Next(0, popSize);
 
                 //recombinaton
-                Individual offspring = h.VSN(h.recombination(newPopulation[random1].solution, newPopulation[random2].solution), 2500);
-
-                if (newPopulation.Where(x => x.solution == offspring.solution).FirstOrDefault() == default(Individual))
-                    newPopulation.Add(offspring);
+                Individual offspring = h.recombination(newPopulation[first].solution, newPopulation[second].solution);
+                if (searchType)
+                    offspring = h.VSN(offspring);
+                else
+                    offspring = h.FM(offspring);
 
                 //selection (incremental) = competes with worst solution in population
-                newPopulation = newPopulation.OrderBy(idv => idv.connections).Take(popSize).ToList();
+                if (offspring.connections < max && !newPopulation.Any(x => x.solution == offspring.solution))
+                {
+                    newPopulation.Add(offspring);
+                    newPopulation = newPopulation.OrderBy(idv => idv.connections).Take(popSize).ToList();
+                    max = newPopulation[popSize - 1].connections;
+                }
 
-                Console.WriteLine("<" + id + "> [" + i + "] " + newPopulation[0].connections + " ! " + offspring.connections);
+                if (newPopulation[0].connections < best.connections)
+                    best = newPopulation[0];
+
+                // OUTPUT
+                if (lclO % 500 == 0 && lclO <= 2000)
+                    sol.Add(new Tuple<int, int, long>(lclO, best.connections, clock.ElapsedMilliseconds / 1000));
+
+                if (clock.ElapsedMilliseconds > 120000 * checks && checks <= 10)
+                {
+                    sol.Add(new Tuple<int, int, long>(lclO, best.connections, clock.ElapsedMilliseconds / 1000));
+                    checks++;
+                }
+                lclO++;
+
+                //Console.WriteLine(lclO + " <" + Math.Round((double)clock.ElapsedMilliseconds / 1000, 2) + "> " + best.connections);
             }
+            clock.Stop();
 
-            Console.WriteLine("<" + id + " : " + popSize + "> " + newPopulation[0].connections);
-            Console.ReadLine();
-
+            return sol;
         }
     }
 }

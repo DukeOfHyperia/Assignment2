@@ -9,11 +9,9 @@ namespace Assignment2
     class Metaheuristic
     {
         Graph graph;
-        List<Tuple<int, int>> swaps;
         public Metaheuristic(Graph g)
         {
             graph = g;
-            swaps = createSwaps(g.graph.Count);
         }
 
         public Individual pertubation(Individual input, int size = 1)
@@ -32,47 +30,45 @@ namespace Assignment2
             return input;
         }
 
-        public Individual VSN(Individual input, int bound = 7500)
+        public Individual VSN(Individual input, int bound = 2500)
         {
-            Individual current = input;
+            Individual current;
             while (true)
             {
-                input = VSN_search(input, bound);
-                if (input == null)
-                    return current;
                 current = input;
+                input = VSN_search(current, bound);
+                if (input.solution == current.solution)
+                    return current;
             }
         }
 
-        public Individual VSN_search(Individual input, int bound = 7500)
+        public Individual VSN_search(Individual input, int bound = 2500)
         {
-            List<Tuple<int, int>> lclSwaps = new List<Tuple<int, int>>(swaps);
-
             Random rand = new Random(DateTime.Now.Millisecond);
-            Tuple<int, int> swap;
-            Individual newSolution;
-
-            while (swaps.Count - lclSwaps.Count < bound)
+            int first, second;
+            for (int i = 0; i < bound; i++)
             {
-                swap = lclSwaps[rand.Next(0, lclSwaps.Count)];
-                newSolution = VSN_swap(input, swap.Item1, swap.Item2);
+                first = rand.Next(0, input.solution.Length);
+                second = first;
+                while (first == second || input.solution[first] == input.solution[second])
+                    second = rand.Next(0, input.solution.Length);
+
+                Individual newSolution = VSN_swap(input, first, second);
                 if (newSolution.connections < input.connections)
                     return newSolution;
-
-                lclSwaps.Remove(swap);
             }
-            return null;
+            return input;
         }
 
         public Individual VSN_swap(Individual input, int first, int second)
         {
-            if (input.solution[first] == input.solution[second])
-                return new Individual("", int.MaxValue);
-
             String s1 = input.solution[first].ToString();
             String s2 = input.solution[second].ToString();
 
             String solution = input.solution.Remove(first, 1).Insert(first, s2).Remove(second, 1).Insert(second, s1);
+
+            int fit = graph.calculateFitness(solution, input.connections, first, second);
+            int fit2 = graph.calculateFitness(solution);
 
             return new Individual(solution, graph.calculateFitness(solution, input.connections, first, second));
         }
@@ -116,6 +112,7 @@ namespace Assignment2
             return new Individual(child, graph.calculateFitness(child));
         }
 
+
         public Queue<Individual> generateInitialPopulation(int n)
         {
             Queue<Individual> population = new Queue<Individual>();
@@ -136,6 +133,7 @@ namespace Assignment2
 
             return population;
         }
+
 
         private int calculateHamming(String input1, String input2)
         {
@@ -175,20 +173,9 @@ namespace Assignment2
             return new String(individual);
         }
 
-        private List<Tuple<int, int>> createSwaps(int size)
-        {
-            List<Tuple<int, int>> swaps = new List<Tuple<int, int>>();
-
-            for (int i = 0; i < size; i++)
-                for (int j = i + 1; j < size; j++)
-                    swaps.Add(new Tuple<int, int>(i, j));
-
-            return swaps;
-        }
-
         public Individual FM(Individual solution)
         {
-            Individual newsolution = solution;
+            Individual newsolution = new Individual(solution.solution, 0);
             int iter = 0;
             while (newsolution.connections < solution.connections || iter == 0) //repeat until no improvement
             {
@@ -246,9 +233,9 @@ namespace Assignment2
             int E = 0; //external cost
             int I = 0; //internal cost
             Char subset = input[vertexid];
-            foreach (int n in graph.graph[vertexid + 1].neighbours)
+            foreach (int n in graph.graph[vertexid].neighbours)
             {
-                if (input[n - 1] == subset)
+                if (input[n] == subset)
                     I++;
                 else
                     E++;
