@@ -71,7 +71,7 @@ namespace Assignment2
             Individual best;
             List<Tuple<int, int, long>> data;
             Solution solILS;
-            List<int> pertSizes = new List<int>() { 5 };
+            List<int> pertSizes = new List<int>() { 2, 5, 10 };
             foreach (int size in pertSizes)
             {
                 Console.WriteLine("Start: ILS<" + size + "> : " + DateTime.Now.ToShortTimeString());
@@ -102,7 +102,7 @@ namespace Assignment2
             Individual best;
             List<Tuple<int, int, long>> data;
             Solution solGLS;
-            List<int> popSizes = new List<int>() { 25 };
+            List<int> popSizes = new List<int>() { 5, 10, 25 };
             foreach (int size in popSizes)
             {
                 Console.WriteLine("Start: GLS<" + size + "> : " + DateTime.Now.ToShortTimeString());
